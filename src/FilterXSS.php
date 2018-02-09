@@ -9,24 +9,28 @@ use Illuminate\Foundation\Http\Middleware\TransformsRequest;
 class FilterXSS extends TransformsRequest
 {
 	/**
-	 * The attributes that should not be trimmed.
+	 * The attributes that should not be filtered.
 	 *
 	 * @var array
 	 */
-	protected $except = [
-		'password',
-		'password_confirmation',
-	];
+	protected $except = [];
 
 	/**
-	 * @var string
+	 * @var Cleaner
 	 */
-	protected $scriptsAndIframesPattern = '/(<script.*script>|<frame.*frame>|<iframe.*iframe>|<object.*object>|<embed.*embed>)/isU';
+	protected $cleaner;
+
 
 	/**
-	 * @var string
+	 * FilterXSS constructor.
+	 *
+	 * @param Cleaner $cleaner
 	 */
-	protected $inlineListenersPattern = '/on.*=\".*\"(?=.*>)/isU';
+	public function __construct(Cleaner $cleaner)
+	{
+		$this->except = config('xss-filter.except', []);
+		$this->cleaner = $cleaner;
+	}
 
 
 	/**
@@ -47,38 +51,9 @@ class FilterXSS extends TransformsRequest
 			return $value;
 		}
 
-		$value = $this->escapeScriptsAndIframes($value);
-		$value = $this->removeInlineEventListeners($value);
+		$value = $this->cleaner->clean($value);
 
 		return $value;
-	}
-
-
-	/**
-	 * @param $value
-	 *
-	 * @return mixed
-	 */
-	protected function escapeScriptsAndIframes(string $value): string
-	{
-		preg_match_all($this->scriptsAndIframesPattern, $value, $matches);
-
-		foreach (array_get($matches, '0', []) as $script) {
-			$value = str_replace($script, e($script), $value);
-		}
-
-		return $value;
-	}
-
-
-	/**
-	 * @param string $value
-	 *
-	 * @return null|string
-	 */
-	protected function removeInlineEventListeners(string $value): string
-	{
-		return preg_replace($this->inlineListenersPattern, '', $value);
 	}
 
 }

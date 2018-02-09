@@ -14,6 +14,7 @@
 		}
 	],
 	"require": {
+		"php": ">=7.0.9",
 		"laravel/framework": "^5.4"
 	},
 	"require-dev": {
@@ -26,5 +27,15 @@
 		}
 	},
 	"prefer-stable": true,
-	"minimum-stability": "dev"
+	"minimum-stability": "dev",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"MasterRO\\LaravelXSSFilter\\XSSFilterServiceProvider"
+			],
+			"aliases": {
+				"XSSCleaner": "MasterRO\\LaravelXSSFilter\\XSSCleanerFacade"
+			}
+		}
+	}
 }
