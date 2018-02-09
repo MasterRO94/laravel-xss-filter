@@ -1,0 +1,30 @@
+{
+	"name": "masterro/laravel-xss-filter",
+	"description": "Filter user input for XSS but don't tuuch other html",
+	"license": "MIT",
+	"keywords": [
+		"laravel",
+		"XSS",
+		"middleware"
+	],
+	"authors": [
+		{
+			"name": "Roman Ihoshyn",
+			"email": "igoshin18@gmail.com"
+		}
+	],
+	"require": {
+		"laravel/framework": "^5.4"
+	},
+	"require-dev": {
+		"orchestra/testbench": "^3.6"
+	},
+	"autoload": {
+		"psr-4": {
+			"MasterRO\\LaravelXSSFilter\\": "src/",
+			"MasterRO\\LaravelXSSFilter\\Tests\\": "tests/"
+		}
+	},
+	"prefer-stable": true,
+	"minimum-stability": "dev"
+}
