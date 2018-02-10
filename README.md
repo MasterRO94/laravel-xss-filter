@@ -1,3 +1,25 @@
+<p align="center">
+    <img src="https://laravel.com/assets/img/components/logo-laravel.svg">
+</p>
+
+<p align="center">
+    <a href="https://packagist.org/packages/masterro/laravel-xss-filter">
+        <img src="https://poser.pugx.org/masterro/laravel-xss-filter/v/stable" alt="Latest Stable Version">
+    </a>
+    <a href="https://packagist.org/packages/masterro/laravel-xss-filter">
+        <img src="https://poser.pugx.org/masterro/laravel-xss-filter/downloads" alt="Total Downloads">
+    </a>
+    <a href="https://packagist.org/packages/masterro/laravel-xss-filter">
+        <img src="https://poser.pugx.org/masterro/laravel-xss-filter/v/unstable" alt="Latest Unstable Version">
+    </a>
+    <a href="https://travis-ci.org/MasterRO94/laravel-xss-filter">
+        <img src="https://travis-ci.org/MasterRO94/laravel-xss-filter.svg">
+    </a>
+    <a href="https://github.com/MasterRO94/laravel-xss-filter/blob/master/LICENSE">
+        <img src="https://poser.pugx.org/masterro/laravel-xss-filter/license" alt="License">
+    </a>
+</p>
+
 # Laravel XSS Filter 
 
 Laravel 5.4+ Middleware to filter user inputs from XSS and iframes and other embed elements.
