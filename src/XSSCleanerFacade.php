@@ -18,5 +18,4 @@ class XSSCleanerFacade extends Facade
 	{
 		return Cleaner::class;
 	}
-
 }

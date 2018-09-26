@@ -20,7 +20,6 @@ class FilterXSS extends TransformsRequest
 	 */
 	protected $cleaner;
 
-
 	/**
 	 * FilterXSS constructor.
 	 *
@@ -32,14 +31,13 @@ class FilterXSS extends TransformsRequest
 		$this->cleaner = $cleaner;
 	}
 
-
 	/**
 	 * Transform the given value.
 	 *
 	 * @param  string $key
 	 * @param  mixed $value
 	 *
-	 * @return mixed
+	 * @return string|mixed
 	 */
 	protected function transform($key, $value)
 	{

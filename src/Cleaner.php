@@ -16,8 +16,9 @@ class Cleaner
 	 */
 	protected $inlineListenersPattern = '/on.*=\".*\"(?=.*>)/isU';
 
-
 	/**
+	 * Clean
+	 *
 	 * @param string $value
 	 *
 	 * @return string
@@ -30,11 +31,12 @@ class Cleaner
 		return $value;
 	}
 
-
 	/**
-	 * @param $value
+	 * Escape Scripts And Iframes
 	 *
-	 * @return mixed
+	 * @param string $value
+	 *
+	 * @return string
 	 */
 	protected function escapeScriptsAndIframes(string $value): string
 	{
@@ -47,15 +49,17 @@ class Cleaner
 		return $value;
 	}
 
-
 	/**
+	 * Remove Inline Event Listeners
+	 *
 	 * @param string $value
 	 *
-	 * @return null|string
+	 * @return string
 	 */
 	protected function removeInlineEventListeners(string $value): string
 	{
-		return preg_replace($this->inlineListenersPattern, '', $value);
-	}
+		$string = preg_replace($this->inlineListenersPattern, '', $value);
 
+		return empty($string) ? '' : $string;
+	}
 }
