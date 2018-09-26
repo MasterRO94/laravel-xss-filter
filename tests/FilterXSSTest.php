@@ -25,9 +25,7 @@ class FilterXSSTest extends TestCase
 	 */
 	protected function request($data = [], $url = 'https://example.test/store')
 	{
-		if (! $this->request) {
-			$this->request = Request::create($url, 'POST', $data);
-		}
+		$this->request = Request::create($url, 'POST', $data);
 
 		return $this->request;
 	}
@@ -40,7 +38,7 @@ class FilterXSSTest extends TestCase
 	 */
 	protected function responseFromMiddlewareWithInput($input = [])
 	{
-		return app(FilterXSS::class)->handle($this->request($input, true), function () {});
+		return app(FilterXSS::class)->handle($this->request($input), function () {});
 	}
 
 
