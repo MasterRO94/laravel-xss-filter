@@ -157,4 +157,13 @@ class FilterXSSTest extends TestCase
 		], $this->request->all());
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_dont_convert_0_to_empty_string() {
+		$this->responseFromMiddlewareWithInput($input = ['text' => '0']);
+
+		$this->assertEquals($input, $this->request->all());
+	}
+
 }

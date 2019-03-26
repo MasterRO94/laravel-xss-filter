@@ -60,6 +60,6 @@ class Cleaner
 	{
 		$string = preg_replace($this->inlineListenersPattern, '', $value);
 
-		return empty($string) ? '' : $string;
+		return !is_string($string) ? '' : $string;
 	}
 }
