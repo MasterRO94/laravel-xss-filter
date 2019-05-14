@@ -21,7 +21,6 @@ class XSSFilterServiceProvider extends ServiceProvider
 		], 'config');
 	}
 
-
 	/**
 	 * Register the service provider.
 	 *

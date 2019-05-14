@@ -6,6 +6,11 @@ namespace MasterRO\LaravelXSSFilter;
 
 use Illuminate\Foundation\Http\Middleware\TransformsRequest;
 
+/**
+ * Class FilterXSS
+ *
+ * @package MasterRO\LaravelXSSFilter
+ */
 class FilterXSS extends TransformsRequest
 {
 	/**
@@ -34,8 +39,8 @@ class FilterXSS extends TransformsRequest
 	/**
 	 * Transform the given value.
 	 *
-	 * @param  string $key
-	 * @param  mixed $value
+	 * @param string $key
+	 * @param mixed $value
 	 *
 	 * @return string|mixed
 	 */

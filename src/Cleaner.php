@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace MasterRO\LaravelXSSFilter;
 
+use Illuminate\Support\Arr;
+
+/**
+ * Class Cleaner
+ *
+ * @package MasterRO\LaravelXSSFilter
+ */
 class Cleaner
 {
 	/**
@@ -42,7 +49,7 @@ class Cleaner
 	{
 		preg_match_all($this->scriptsAndIframesPattern, $value, $matches);
 
-		foreach (array_get($matches, '0', []) as $script) {
+		foreach (Arr::get($matches, '0', []) as $script) {
 			$value = str_replace($script, e($script), $value);
 		}
 
@@ -60,6 +67,6 @@ class Cleaner
 	{
 		$string = preg_replace($this->inlineListenersPattern, '', $value);
 
-		return !is_string($string) ? '' : $string;
+		return ! is_string($string) ? '' : $string;
 	}
 }

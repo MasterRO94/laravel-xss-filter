@@ -9,6 +9,11 @@ use Illuminate\Http\Response;
 use Orchestra\Testbench\TestCase;
 use MasterRO\LaravelXSSFilter\FilterXSS;
 
+/**
+ * Class FilterXSSTest
+ *
+ * @package MasterRO\LaravelXSSFilter\Tests
+ */
 class FilterXSSTest extends TestCase
 {
 	/**
@@ -16,8 +21,9 @@ class FilterXSSTest extends TestCase
 	 */
 	protected $request;
 
-
 	/**
+	 * Request
+	 *
 	 * @param array $data
 	 * @param string $url
 	 *
@@ -30,17 +36,21 @@ class FilterXSSTest extends TestCase
 		return $this->request;
 	}
 
-
 	/**
+	 * Response From Middleware With Input
+	 *
 	 * @param array $input
 	 *
-	 * @return Response
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 * @throws \Exception
 	 */
 	protected function responseFromMiddlewareWithInput($input = [])
 	{
-		return app(FilterXSS::class)->handle($this->request($input), function () {});
+		return app(FilterXSS::class)
+			->handle($this->request($input), function () {
+				// nothing to do here
+			});
 	}
-
 
 	/**
 	 * @test
@@ -51,7 +61,6 @@ class FilterXSSTest extends TestCase
 
 		$this->assertEquals($input, $this->request->all());
 	}
-
 
 	/**
 	 * @test
@@ -69,7 +78,6 @@ class FilterXSSTest extends TestCase
 		], $this->request->all());
 	}
 
-
 	/**
 	 * @test
 	 */
@@ -85,7 +93,6 @@ class FilterXSSTest extends TestCase
 			'html_with_script_multiline' => "<div class=\"some-class\">\n<a href=\"http://example.test\" class=\"link\">link text</a>\n Before text \n " . e("<script>\n let f = () => alert(1); f(); \n </script>") . "\n After text</div> \n  test on some text <span>test</span> <span style='color: red;'>test</span> test",
 		], $this->request->all());
 	}
-
 
 	/**
 	 * @test
@@ -107,7 +114,6 @@ class FilterXSSTest extends TestCase
 		], $this->request->all());
 	}
 
-
 	/**
 	 * @test
 	 */
@@ -123,7 +129,6 @@ class FilterXSSTest extends TestCase
 			'html_multiline' => "<div class=\"hover\"  data-a=\"b\">\n<p >\n<span class=\"span\" ></span>Text ...</p>\n</div>",
 		], $this->request->all());
 	}
-
 
 	/**
 	 * @test
@@ -160,7 +165,8 @@ class FilterXSSTest extends TestCase
 	/**
 	 * @test
 	 */
-	public function it_dont_convert_0_to_empty_string() {
+	public function it_dont_convert_0_to_empty_string()
+	{
 		$this->responseFromMiddlewareWithInput($input = ['text' => '0']);
 
 		$this->assertEquals($input, $this->request->all());
