@@ -76,13 +76,13 @@ class FilterXSSTest extends TestCase
 	public function it_doesnt_change_non_script_html_inputs()
 	{
 		$this->responseFromMiddlewareWithInput([
-			'html_with_script_src'       => '<div class="some-class"><a href="http://example.test" class="link">link text</a>Before text <script src="app.js"></script> after text</div>',
-			'html_with_script_multiline' => "<div class=\"some-class\">\n<a href=\"http://example.test\" class=\"link\">link text</a>\n Before text \n <script>\n let f = () => alert(1); f(); \n </script>\n After text</div>",
+			'html_with_script_src'       => '<div class="some-class"><a href="http://example.test" class="link">link text</a>Before text <script src="app.js"></script> after text</div> test on some text <span>test</span> <span style="color: red;">test</span> test',
+			'html_with_script_multiline' => "<div class=\"some-class\">\n<a href=\"http://example.test\" class=\"link\">link text</a>\n Before text \n <script>\n let f = () => alert(1); f(); \n </script>\n After text</div> \n  test on some text <span>test</span> <span style='color: red;'>test</span> test",
 		]);
 
 		$this->assertEquals([
-			'html_with_script_src'       => '<div class="some-class"><a href="http://example.test" class="link">link text</a>Before text ' . e('<script src="app.js"></script>') . ' after text</div>',
-			'html_with_script_multiline' => "<div class=\"some-class\">\n<a href=\"http://example.test\" class=\"link\">link text</a>\n Before text \n " . e("<script>\n let f = () => alert(1); f(); \n </script>") . "\n After text</div>",
+			'html_with_script_src'       => '<div class="some-class"><a href="http://example.test" class="link">link text</a>Before text ' . e('<script src="app.js"></script>') . ' after text</div> test on some text <span>test</span> <span style="color: red;">test</span> test',
+			'html_with_script_multiline' => "<div class=\"some-class\">\n<a href=\"http://example.test\" class=\"link\">link text</a>\n Before text \n " . e("<script>\n let f = () => alert(1); f(); \n </script>") . "\n After text</div> \n  test on some text <span>test</span> <span style='color: red;'>test</span> test",
 		], $this->request->all());
 	}
 

@@ -14,7 +14,7 @@ class Cleaner
 	/**
 	 * @var string
 	 */
-	protected $inlineListenersPattern = '/on.*=\".*\"(?=.*>)/isU';
+	protected $inlineListenersPattern = '/on[A-z]+=\".*\"(?=.*>)/isU';
 
 	/**
 	 * Clean
