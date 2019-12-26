@@ -21,7 +21,12 @@ class Cleaner
 	/**
 	 * @var string
 	 */
-	protected $inlineListenersPattern = '/on[A-z]+=\".*\"(?=.*>)/isU';
+	protected $inlineListenersPattern = '/on[A-z]+=(\"|\').*(\"|\')(?=.*>)/isU';
+
+	/**
+	 * @var string
+	 */
+	protected $invalidHtmlInlineListenersPattern = '/on[A-z]+=(\"|\')?.*(\"|\')?(?=.*>)/isU';
 
 	/**
 	 * Clean
@@ -66,6 +71,7 @@ class Cleaner
 	protected function removeInlineEventListeners(string $value): string
 	{
 		$string = preg_replace($this->inlineListenersPattern, '', $value);
+		$string = preg_replace($this->invalidHtmlInlineListenersPattern, '', $string);
 
 		return ! is_string($string) ? '' : $string;
 	}

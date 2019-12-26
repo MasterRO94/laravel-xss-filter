@@ -120,13 +120,29 @@ class FilterXSSTest extends TestCase
 	public function it_removes_inline_listeners()
 	{
 		$this->responseFromMiddlewareWithInput([
-			'html'           => '<div class="hover" onhover="show()" data-a="b"><p onclick="click"><span class="span" ondblclick="hide()"></span>Text ...</p></div>',
+			'html'           => '<div class="hover" onhover=\'show()\' data-a="b"><p onclick="click"><span class="span" ondblclick="hide()"></span>Text ...</p></div>',
 			'html_multiline' => "<div class=\"hover\" onhover=\"show()\" data-a=\"b\">\n<p onclick=\"click\">\n<span class=\"span\" ondblclick=\"hide()\"></span>Text ...</p>\n</div>",
 		]);
 
 		$this->assertEquals([
 			'html'           => '<div class="hover"  data-a="b"><p ><span class="span" ></span>Text ...</p></div>',
 			'html_multiline' => "<div class=\"hover\"  data-a=\"b\">\n<p >\n<span class=\"span\" ></span>Text ...</p>\n</div>",
+		], $this->request->all());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_removes_inline_listeners_from_invalid_html()
+	{
+		$this->responseFromMiddlewareWithInput([
+			'html'           => '<div class="hover" onhover=show() data-a="b"><p onclick=click><span class="span" ondblclick=hide()></span>Text ...</p></div>',
+			'html_multiline' => "<div class=\"hover\" onhover=show() data-a=\"b\">\n<p onclick=click>\n<span class=span ondblclick=hide()></span>Text ...</p>\n</div>",
+		]);
+
+		$this->assertEquals([
+			'html'           => '<div class="hover" show() data-a="b"><p click><span class="span" hide()></span>Text ...</p></div>',
+			'html_multiline' => "<div class=\"hover\" show() data-a=\"b\">\n<p click>\n<span class=span hide()></span>Text ...</p>\n</div>",
 		], $this->request->all());
 	}
 
@@ -171,5 +187,4 @@ class FilterXSSTest extends TestCase
 
 		$this->assertEquals($input, $this->request->all());
 	}
-
 }
