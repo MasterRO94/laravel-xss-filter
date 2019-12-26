@@ -136,12 +136,12 @@ class FilterXSSTest extends TestCase
 	public function it_removes_inline_listeners_from_invalid_html()
 	{
 		$this->responseFromMiddlewareWithInput([
-			'html'           => '<div class="hover" onhover=show() data-a="b"><p onclick=click><span class="span" ondblclick=hide()></span>Text ...</p></div>',
+			'html'           => '<div class="hover" onhover=show() onclick=ondblclick=alert() data-a="b"><p onclick=click><span class="span" ondblclick=hide()></span>Text ...</p></div>',
 			'html_multiline' => "<div class=\"hover\" onhover=show() data-a=\"b\">\n<p onclick=click>\n<span class=span ondblclick=hide()></span>Text ...</p>\n</div>",
 		]);
 
 		$this->assertEquals([
-			'html'           => '<div class="hover" show() data-a="b"><p click><span class="span" hide()></span>Text ...</p></div>',
+			'html'           => '<div class="hover" show() alert() data-a="b"><p click><span class="span" hide()></span>Text ...</p></div>',
 			'html_multiline' => "<div class=\"hover\" show() data-a=\"b\">\n<p click>\n<span class=span hide()></span>Text ...</p>\n</div>",
 		], $this->request->all());
 	}
