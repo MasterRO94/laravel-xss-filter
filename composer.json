@@ -1,6 +1,6 @@
 {
 	"name": "masterro/laravel-xss-filter",
-	"description": "Filter user input for XSS but don't tuuch other html",
+	"description": "Filter user input for XSS but don't touch other html",
 	"license": "MIT",
 	"keywords": [
 		"laravel",
