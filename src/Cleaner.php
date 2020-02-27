@@ -21,7 +21,7 @@ class Cleaner
 	/**
 	 * @var string
 	 */
-	protected $inlineListenersPattern = '/on[A-z]+=(\"|\').*(\"|\')(?=.*>)/isU';
+	protected $inlineListenersPattern = '/(on[A-z]+=(\"|\').*(\"|\')(?=.*>)|(javascript:.*(?=.(\'|")??>)(\)|;)??))/isU';
 
 	/**
 	 * @var string

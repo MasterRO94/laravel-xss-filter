@@ -187,4 +187,20 @@ class FilterXSSTest extends TestCase
 
 		$this->assertEquals($input, $this->request->all());
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_removes_inline_javascript_in_href()
+	{
+		$this->responseFromMiddlewareWithInput([
+			'html'           => '<div class="hover"><a href="javascript:alert(document.cookie)">Link</a></div>',
+			'html_multiline' => "<div class=\"hover\">\n<p onclick=click>\n<a href=\"javascript:alert(document.cookie)\">Link</a>\n</p>\n</div>",
+		]);
+
+		$this->assertEquals([
+			'html'           => '<div class="hover"><a href="">Link</a></div>',
+			'html_multiline' => "<div class=\"hover\">\n<p click>\n<a href=\"\">Link</a>\n</p>\n</div>",
+		], $this->request->all());
+	}
 }
