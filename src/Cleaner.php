@@ -21,12 +21,12 @@ class Cleaner
 	/**
 	 * @var string
 	 */
-	protected $inlineListenersPattern = '/(on[A-z]+=(\"|\').*(\"|\')(?=.*>)|(javascript:.*(?=.(\'|")??>)(\)|;)??))/isU';
+	protected $inlineListenersPattern = '/(\bon[A-z]+=(\"|\').*(\"|\')(?=.*>)|(javascript:.*(?=.(\'|")??>)(\)|;)??))/isU';
 
 	/**
 	 * @var string
 	 */
-	protected $invalidHtmlInlineListenersPattern = '/on[A-z]+=(\"|\')?.*(\"|\')?(?=.*>)/isU';
+	protected $invalidHtmlInlineListenersPattern = '/\bon[A-z]+=(\"|\')?.*(\"|\')?(?=.*>)/isU';
 
 	/**
 	 * Clean
