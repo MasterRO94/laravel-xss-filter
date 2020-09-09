@@ -22,6 +22,8 @@
 
 # Laravel XSS Filter 
 
+### Configure once and forget about XSS attacks!
+
 Laravel 5.4+ Middleware to filter user inputs from XSS and iframes and other embed elements.
 
 It does not remove the html, it is only escaped script tags and embeds.
