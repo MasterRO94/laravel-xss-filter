@@ -26,7 +26,7 @@ Laravel 5.4+ Middleware to filter user inputs from XSS and iframes and other emb
 
 It does not remove the html, it is only escaped script tags and embeds.
 
-But it does delete inline html event listeners such as `onclick`.
+However, it does delete inline html event listeners such as `onclick`.
 
 
 For example 
