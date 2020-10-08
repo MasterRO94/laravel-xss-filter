@@ -9,9 +9,6 @@
     <a href="https://packagist.org/packages/masterro/laravel-xss-filter">
         <img src="https://img.shields.io/packagist/dt/masterro/laravel-xss-filter.svg?style=flat-rounded" alt="Total Downloads">
     </a>
-    <a href="https://packagist.org/packages/masterro/laravel-xss-filter">
-        <img src="https://poser.pugx.org/masterro/laravel-xss-filter/v/unstable" alt="Latest Unstable Version">
-    </a>
     <a href="https://travis-ci.org/MasterRO94/laravel-xss-filter">
         <img src="https://travis-ci.org/MasterRO94/laravel-xss-filter.svg">
     </a>
