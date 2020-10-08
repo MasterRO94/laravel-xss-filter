@@ -4,10 +4,10 @@
 
 <p align="center">
     <a href="https://packagist.org/packages/masterro/laravel-xss-filter">
-        <img src="https://poser.pugx.org/masterro/laravel-xss-filter/v/stable" alt="Latest Stable Version">
+        <img src="https://img.shields.io/packagist/v/masterro/laravel-xss-filter.svg?style=flat-rounded" alt="Latest Stable Version">
     </a>
     <a href="https://packagist.org/packages/masterro/laravel-xss-filter">
-        <img src="https://poser.pugx.org/masterro/laravel-xss-filter/downloads" alt="Total Downloads">
+        <img src="https://img.shields.io/packagist/dt/masterro/laravel-xss-filter.svg?style=flat-rounded" alt="Total Downloads">
     </a>
     <a href="https://packagist.org/packages/masterro/laravel-xss-filter">
         <img src="https://poser.pugx.org/masterro/laravel-xss-filter/v/unstable" alt="Latest Unstable Version">
@@ -16,7 +16,7 @@
         <img src="https://travis-ci.org/MasterRO94/laravel-xss-filter.svg">
     </a>
     <a href="https://github.com/MasterRO94/laravel-xss-filter/blob/master/LICENSE">
-        <img src="https://poser.pugx.org/masterro/laravel-xss-filter/license" alt="License">
+        <img src="https://img.shields.io/github/license/MasterRO94/laravel-xss-filter" alt="License">
     </a>
 </p>
 
@@ -102,11 +102,11 @@ You can register `\MasterRO\LaravelXSSFilter\FilterXSS::class` for filtering in 
 > Have a look at [Laravel's middleware documentation](https://laravel.com/docs/middleware#registering-middleware), if you need any help.
 
 # Usage
-After adding middleware every request will be filtered.
+After adding middleware, every request will be filtered.
 
-If you need to specify attributes that should not be filtered add them to `xss-filter.except` config. By default filter excepts `password` and `password_confirmation` fields.
+If you need to specify attributes that should not be filtered add them to `xss-filter.except` config. By default, filter excepts `password` and `password_confirmation` fields.
  
-If you want to clean some value in other place (i.e. Controller) you can use `XSSCleaner` Facade
+If you want to clean some value in other place (i.e. Controller) you can use `XSSCleaner` Facade.
 
 ```php
 $clean = XSSCleaner::clean($string);

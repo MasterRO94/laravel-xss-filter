@@ -7,6 +7,7 @@ namespace MasterRO\LaravelXSSFilter\Tests;
 use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase;
 use MasterRO\LaravelXSSFilter\FilterXSS;
+use MasterRO\LaravelXSSFilter\XSSFilterServiceProvider;
 
 /**
  * Class FilterXSSTest
@@ -19,6 +20,20 @@ class FilterXSSTest extends TestCase
      * @var Request
      */
     protected $request;
+
+    /**
+     * Get Package Providers
+     *
+     * @param \Illuminate\Foundation\Application $app
+     *
+     * @return string[]
+     */
+    protected function getPackageProviders($app)
+    {
+        return [
+            XSSFilterServiceProvider::class,
+        ];
+    }
 
     /**
      * Request
@@ -216,6 +231,26 @@ class FilterXSSTest extends TestCase
         $this->assertEquals([
             'html'           => '<p><span  data-toggle="popover" click data-placement="top" data-content="description">text</span></p>',
             'html_multiline' => "<p>\n<span  data-toggle=\"popover\" data-placement=\"top\" data-content=\"description\">\ntext\n</span>\n</p>",
+        ], $this->request->all());
+    }
+
+    /**
+     * @test
+     */
+    public function it_escapes_inline_event_listeners()
+    {
+        config([
+            'xss-filter.escape_inline_listeners' => true,
+        ]);
+
+        $this->responseFromMiddlewareWithInput([
+            'html'           => '<p><span onclick="alert(1)" data-toggle="popover" onclick=click data-placement="top" data-content="description">text</span></p>',
+            'html_multiline' => "<p>\n<span onclick=\"alert(1)\" data-toggle=\"popover\" data-placement=\"top\" data-content=\"description\">\ntext\n</span>\n</p>",
+        ]);
+
+        $this->assertEquals([
+            'html'           => '<p><span onclick&#x3d;"alert(1)" data-toggle="popover" onclick&#x3d;click data-placement="top" data-content="description">text</span></p>',
+            'html_multiline' => "<p>\n<span onclick&#x3d;\"alert(1)\" data-toggle=\"popover\" data-placement=\"top\" data-content=\"description\">\ntext\n</span>\n</p>",
         ], $this->request->all());
     }
 }
