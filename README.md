@@ -12,6 +12,9 @@
     <a href="https://travis-ci.org/MasterRO94/laravel-xss-filter">
         <img src="https://travis-ci.org/MasterRO94/laravel-xss-filter.svg">
     </a>
+    <a href="https://github.com/MasterRO94/laravel-xss-filter/actions">
+        <img src="https://github.com/MasterRO94/laravel-xss-filter/workflows/Tests/badge.svg" alt="Build Status">
+    </a>
     <a href="https://github.com/MasterRO94/laravel-xss-filter/blob/master/LICENSE">
         <img src="https://img.shields.io/github/license/MasterRO94/laravel-xss-filter" alt="License">
     </a>
