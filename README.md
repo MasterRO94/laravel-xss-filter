@@ -110,6 +110,17 @@ If you want to clean some value in other place (i.e. Controller) you can use `XS
 $clean = XSSCleaner::clean($string);
 ```
  
+#### Runtime configuration
+
+
+```php
+$clean = XSSCleaner::config()
+    ->allowElement('iframe')
+    ->allowMediaHosts(['youtube.com'])
+    ->blockElement('a')
+    ->clean($string);
+```
+ 
 
 #### _I will be grateful if you star this project :)_
 
