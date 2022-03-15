@@ -57,7 +57,7 @@ class Cleaner
 
         $allowedUrls = collect($this->config->allowedMediaHosts())
             ->map(
-                fn(string $host) => ! Str::startsWith($host, ['http', 'https'])
+                fn(string $host) => ! Str::startsWith($host, ['http', 'https', '//'])
                     ? ["http://{$host}", "https://{$host}", "//{$host}"]
                     : [$host]
             )

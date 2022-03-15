@@ -280,20 +280,20 @@ class FilterXSSTest extends TestCase
      */
     public function it_does_not_escape_allowed_media_hosts()
     {
-        XSSCleaner::config()->allowElement('iframe')->allowMediaHosts(['example.test', 'https://video.test']);
+        XSSCleaner::config()->allowElement('iframe')->allowMediaHosts(['example.test', 'https://video.test', 'youtu.be']);
 
         $this->responseFromMiddlewareWithInput([
             'iframe'           => '<div class="block">Before text<iframe src="http://example.test">Not supported!</iframe> after text.</div>',
             'iframe_multiline' => '<div class="block">\nBefore text\n<iframe src="http://example.test">Not supported!</iframe>\n after text.\n</div>',
             'video'            => '<div class="block">Before text<video><source src="https://video.test/play"></video> after text.</div>',
-            'video_multiline'  => '<div class="block">\nBefore text\n<video>\n<source src="https://video.test/1/play">\n<source src="https://video.test/2/play"></video>\n after text.\n</div>',
+            'video_multiline'  => '<div class="block">\nBefore text\n<video>\n<source src="https://video.test/1/play">\n<source src="//youtu.be/play"></video>\n after text.\n</div>',
         ]);
 
         $this->assertEquals([
             'iframe'           => '<div class="block">Before text<iframe src="http://example.test">Not supported!</iframe> after text.</div>',
             'iframe_multiline' => '<div class="block">\nBefore text\n<iframe src="http://example.test">Not supported!</iframe>\n after text.\n</div>',
             'video'            => '<div class="block">Before text<video><source src="https://video.test/play"></video> after text.</div>',
-            'video_multiline'  => '<div class="block">\nBefore text\n<video>\n<source src="https://video.test/1/play">\n<source src="https://video.test/2/play"></video>\n after text.\n</div>',
+            'video_multiline'  => '<div class="block">\nBefore text\n<video>\n<source src="https://video.test/1/play">\n<source src="//youtu.be/play"></video>\n after text.\n</div>',
         ], $this->request->all());
     }
 }
