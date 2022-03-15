@@ -33,12 +33,12 @@ class CleanerConfig
         return new static();
     }
 
-    public static function fromArray(array $config): CleanerConfig
+    public static function fromArray(array $params): CleanerConfig
     {
         $config = static::make();
 
-        foreach ($config as $key => $value) {
-            $setter = Str::camel($key);
+        foreach ($params as $key => $value) {
+            $setter = 'set' . Str::camel($key);
 
             if (method_exists($config, $setter)) {
                 $config->{$setter}($value);
