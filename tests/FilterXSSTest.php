@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase;
 use MasterRO\LaravelXSSFilter\FilterXSS;
 use MasterRO\LaravelXSSFilter\XSSFilterServiceProvider;
+use MasterRO\LaravelXSSFilter\XSSCleanerFacade as XSSCleaner;
 
 /**
  * Class FilterXSSTest
@@ -239,9 +240,7 @@ class FilterXSSTest extends TestCase
      */
     public function it_escapes_inline_event_listeners()
     {
-        config([
-            'xss-filter.escape_inline_listeners' => true,
-        ]);
+        XSSCleaner::config()->setEscapeInlineListeners(true);
 
         $this->responseFromMiddlewareWithInput([
             'html'           => '<p><span onclick="alert(1)" data-toggle="popover" onclick=click data-placement="top" data-content="description">text</span></p>',
@@ -251,6 +250,50 @@ class FilterXSSTest extends TestCase
         $this->assertEquals([
             'html'           => '<p><span onclick&#x3d;"alert(1)" data-toggle="popover" onclick&#x3d;click data-placement="top" data-content="description">text</span></p>',
             'html_multiline' => "<p>\n<span onclick&#x3d;\"alert(1)\" data-toggle=\"popover\" data-placement=\"top\" data-content=\"description\">\ntext\n</span>\n</p>",
+        ], $this->request->all());
+    }
+
+    /**
+     * @test
+     */
+    public function it_cleans_disallowed_media_hosts()
+    {
+        XSSCleaner::config()->allowElement('iframe')->allowMediaHosts(['youtube.com']);
+
+        $this->responseFromMiddlewareWithInput([
+            'iframe'           => '<div class="block">Before text<iframe src="http://example.test">Not supported!</iframe> after text.</div>',
+            'iframe_multiline' => '<div class="block">\nBefore text\n<iframe src="http://example.test">Not supported!</iframe>\n after text.\n</div>',
+            'video'            => '<div class="block">Before text<video><source src="https://video.test/play"></video> after text.</div>',
+            'video_multiline'  => '<div class="block">\nBefore text\n<video>\n<source src="https://video.test/1/play">\n<source src="https://video.test/2/play"></video>\n after text.\n</div>',
+        ]);
+
+        $this->assertEquals([
+            'iframe'           => '<div class="block">Before text<iframe src="#!">Not supported!</iframe> after text.</div>',
+            'iframe_multiline' => '<div class="block">\nBefore text\n<iframe src="#!">Not supported!</iframe>\n after text.\n</div>',
+            'video'            => '<div class="block">Before text<video><source src="#!"></video> after text.</div>',
+            'video_multiline'  => '<div class="block">\nBefore text\n<video>\n<source src="#!">\n<source src="#!"></video>\n after text.\n</div>',
+        ], $this->request->all());
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_escape_allowed_media_hosts()
+    {
+        XSSCleaner::config()->allowElement('iframe')->allowMediaHosts(['example.test', 'https://video.test']);
+
+        $this->responseFromMiddlewareWithInput([
+            'iframe'           => '<div class="block">Before text<iframe src="http://example.test">Not supported!</iframe> after text.</div>',
+            'iframe_multiline' => '<div class="block">\nBefore text\n<iframe src="http://example.test">Not supported!</iframe>\n after text.\n</div>',
+            'video'            => '<div class="block">Before text<video><source src="https://video.test/play"></video> after text.</div>',
+            'video_multiline'  => '<div class="block">\nBefore text\n<video>\n<source src="https://video.test/1/play">\n<source src="https://video.test/2/play"></video>\n after text.\n</div>',
+        ]);
+
+        $this->assertEquals([
+            'iframe'           => '<div class="block">Before text<iframe src="http://example.test">Not supported!</iframe> after text.</div>',
+            'iframe_multiline' => '<div class="block">\nBefore text\n<iframe src="http://example.test">Not supported!</iframe>\n after text.\n</div>',
+            'video'            => '<div class="block">Before text<video><source src="https://video.test/play"></video> after text.</div>',
+            'video_multiline'  => '<div class="block">\nBefore text\n<video>\n<source src="https://video.test/1/play">\n<source src="https://video.test/2/play"></video>\n after text.\n</div>',
         ], $this->request->all());
     }
 }

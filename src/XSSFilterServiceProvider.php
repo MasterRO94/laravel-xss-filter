@@ -18,7 +18,6 @@ class XSSFilterServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/xss-filter.php' => config_path('xss-filter.php'),
         ], 'config');
-
     }
 
     /**
@@ -29,6 +28,9 @@ class XSSFilterServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/xss-filter.php', 'xss-filter');
-    }
 
+        $this->app->singleton(Cleaner::class, static function () {
+            return new Cleaner(CleanerConfig::fromArray(config('xss-filter')));
+        });
+    }
 }

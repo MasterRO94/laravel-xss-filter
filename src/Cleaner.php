@@ -5,101 +5,100 @@ declare(strict_types=1);
 namespace MasterRO\LaravelXSSFilter;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
-/**
- * Class Cleaner
- *
- * @package MasterRO\LaravelXSSFilter
- */
 class Cleaner
 {
-    /**
-     * @var string
-     */
-    protected $scriptsAndIframesPattern = '/(<script.*script>|<frame.*frame>|<iframe.*iframe>|<object.*object>|<embed.*embed>)/isU';
+    protected CleanerConfig $config;
 
-    /**
-     * @var string
-     */
-    protected $inlineListenersPattern = '/(\bon[A-z]+=(\"|\').*(\"|\')(?=.*>)|(javascript:.*(?=.(\'|")??>)(\)|;)??))/isU';
-
-    /**
-     * @var string
-     */
-    protected $invalidHtmlInlineListenersPattern = '/\bon[A-z]+=(\"|\')?.*(\"|\')?(?=.*>)/isU';
-
-    /**
-     * Clean
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    public function clean(string $value): string
+    public function __construct(CleanerConfig $config)
     {
-        $value = $this->escapeScriptsAndIframes($value);
-        $value = config('xss-filter.escape_inline_listeners', false)
-            ? $this->escapeInlineEventListeners($value)
-            : $this->removeInlineEventListeners($value);
-
-        return $value;
+        $this->config = $config;
     }
 
-    /**
-     * Escape Scripts And Iframes
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function escapeScriptsAndIframes(string $value): string
+    public function withConfig(CleanerConfig $config): Cleaner
     {
-        preg_match_all($this->scriptsAndIframesPattern, $value, $matches);
+        $this->config = $config;
 
-        foreach (Arr::get($matches, '0', []) as $script) {
-            $value = str_replace($script, e($script), $value);
+        return $this;
+    }
+
+    public function config(): CleanerConfig
+    {
+        return $this->config;
+    }
+
+    public function clean(string $value): string
+    {
+        $value = $this->escapeElements($value);
+        $value = $this->cleanMediaElements($value);
+
+        return $this->config->shouldEscapeInlineListeners()
+            ? $this->escapeInlineEventListeners($value)
+            : $this->removeInlineEventListeners($value);
+    }
+
+    public function escapeElements(string $value): string
+    {
+        preg_match_all($this->config->elementsPattern(), $value, $matches);
+
+        foreach (Arr::get($matches, '0', []) as $htmlElement) {
+            $value = str_replace($htmlElement, e($htmlElement), $value);
         }
 
         return $value;
     }
 
-    /**
-     * Remove Inline Event Listeners
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function removeInlineEventListeners(string $value): string
+    public function cleanMediaElements(string $value): string
     {
-        $string = preg_replace($this->inlineListenersPattern, '', $value);
-        $string = preg_replace($this->invalidHtmlInlineListenersPattern, '', $string);
+        if (! $this->config->allowedMediaHosts()) {
+            return $value;
+        }
 
-        return ! is_string($string) ? '' : $string;
+        $allowedUrls = collect($this->config->allowedMediaHosts())
+            ->map(
+                fn(string $host) => ! Str::startsWith($host, ['http', 'https'])
+                    ? ["http://{$host}", "https://{$host}"]
+                    : [$host]
+            )
+            ->flatten()
+            ->all();
+
+        preg_match_all($this->config->mediaElementsPattern(), $value, $matches);
+
+        foreach (Arr::get($matches, '0', []) as $htmlElement) {
+            preg_match_all('/src="(.*)"/isU', $htmlElement, $sources);
+
+            $urls = Arr::get($sources, '1', []);
+
+            foreach ($urls as $url) {
+                if (! Str::startsWith($url, $allowedUrls)) {
+                    $value = str_replace($url, '#!', $value);
+                }
+            }
+        }
+
+        return $value;
     }
 
-    /**
-     * Escape Inline Event Listeners
-     *
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function escapeInlineEventListeners(string $value): string
+    public function removeInlineEventListeners(string $value): string
     {
-        $string = preg_replace_callback($this->inlineListenersPattern, [$this, 'escapeEqualSign'], $value);
-        $string = preg_replace_callback($this->invalidHtmlInlineListenersPattern, [$this, 'escapeEqualSign'], $string);
+        foreach ($this->config->inlineListenersPatterns() as $pattern) {
+            $value = preg_replace($pattern, '', $value);
+        }
 
-        return ! is_string($string) ? '' : $string;
+        return ! is_string($value) ? '' : $value;
     }
 
-    /**
-     * Escape Equal Sign
-     *
-     * @param array $matches
-     *
-     * @return string
-     */
+    public function escapeInlineEventListeners(string $value): string
+    {
+        foreach ($this->config->inlineListenersPatterns() as $pattern) {
+            $value = preg_replace_callback($pattern, [$this, 'escapeEqualSign'], $value);
+        }
+
+        return ! is_string($value) ? '' : $value;
+    }
+
     protected function escapeEqualSign(array $matches): string
     {
         return str_replace('=', '&#x3d;', $matches[0]);
