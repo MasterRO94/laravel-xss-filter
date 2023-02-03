@@ -1,41 +1,41 @@
 {
-	"name": "masterro/laravel-xss-filter",
-	"description": "Filter user input for XSS but don't touch other html",
-	"license": "MIT",
-	"keywords": [
-		"laravel",
-		"XSS",
-		"middleware"
-	],
-	"authors": [
-		{
-			"name": "Roman Ihoshyn",
-			"email": "igoshin18@gmail.com"
-		}
-	],
-	"require": {
-		"php": ">=7.4",
-		"laravel/framework": "^6.20.26|^7.30.6|^8.0|^9.0"
-	},
-	"require-dev": {
-		"orchestra/testbench": "^v4.0|^v5.0|^v6.0"
-	},
-	"autoload": {
-		"psr-4": {
-			"MasterRO\\LaravelXSSFilter\\": "src/",
-			"MasterRO\\LaravelXSSFilter\\Tests\\": "tests/"
-		}
-	},
-	"prefer-stable": true,
-	"minimum-stability": "dev",
-	"extra": {
-		"laravel": {
-			"providers": [
-				"MasterRO\\LaravelXSSFilter\\XSSFilterServiceProvider"
-			],
-			"aliases": {
-				"XSSCleaner": "MasterRO\\LaravelXSSFilter\\XSSCleanerFacade"
-			}
-		}
-	}
+    "name": "masterro/laravel-xss-filter",
+    "description": "Filter user input for XSS but don't touch other html",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "XSS",
+        "middleware"
+    ],
+    "authors": [
+        {
+            "name": "Roman Ihoshyn",
+            "email": "igoshin18@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "laravel/framework": "^6.20.26|^7.30.6|^8.0|^9.0|^10.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^v4.0|^v5.0|^v6.0|^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MasterRO\\LaravelXSSFilter\\": "src/",
+            "MasterRO\\LaravelXSSFilter\\Tests\\": "tests/"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MasterRO\\LaravelXSSFilter\\XSSFilterServiceProvider"
+            ],
+            "aliases": {
+                "XSSCleaner": "MasterRO\\LaravelXSSFilter\\XSSCleanerFacade"
+            }
+        }
+    }
 }
