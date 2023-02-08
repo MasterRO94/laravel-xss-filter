@@ -23,7 +23,7 @@
     </a>
 </p>
 
-# Laravel XSS Filter 
+# XSS Filter/Sanitizer for Laravel 
 
 ### Configure once and forget about XSS attacks!
 
