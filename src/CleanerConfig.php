@@ -10,7 +10,7 @@ class CleanerConfig
 {
     protected ?array $allowedElements = null;
 
-    protected array $blockedElements = ['script', 'frame', 'iframe', 'object', 'embed'];
+    protected array $deniedElements = ['script', 'frame', 'iframe', 'object', 'embed'];
 
     protected array $mediaElements = ['img', 'audio', 'video', 'iframe'];
 
@@ -26,7 +26,7 @@ class CleanerConfig
 
     protected string $inlineListenersPattern = '/\bon\w+\s*=\s*([\'"])(.*?)\1|javascript:[^"\' >]*/is';
 
-    protected string $invalidHtmlInlineListenersPattern = '/\bon\w+\s*=\s*([\'"])?([^\'"\s>]+)\1?(?=\s|>)/i';
+    protected string $malformedListenersPattern = '/\bon\w+\s*=\s*([\'"])?([^\'"\s>]+)\1?(?=\s|>)/i';
 
     public static function make(): CleanerConfig
     {
@@ -61,6 +61,26 @@ class CleanerConfig
     }
 
     /**
+     * Configures the given element as not allowed.
+     *
+     * Denied elements are elements the cleaner should escape from the input.
+     */
+    public function denyElement(string $element): CleanerConfig
+    {
+        $this->deniedElements[] = $element;
+
+        return $this;
+    }
+
+    /**
+     * Alias for ::denyElement()
+     */
+    public function blockElement(string $element): CleanerConfig
+    {
+        return $this->denyElement($element);
+    }
+
+    /**
      * Configures the given element as media.
      *
      * Allowed elements are elements the cleaner should retain from the input.
@@ -88,18 +108,6 @@ class CleanerConfig
     }
 
     /**
-     * Configures the given element as blocked.
-     *
-     * Blocked elements are elements the cleaner should escape from the input.
-     */
-    public function blockElement(string $element): CleanerConfig
-    {
-        $this->blockedElements[] = $element;
-
-        return $this;
-    }
-
-    /**
      * Allows only a given list of hosts to be used in media source attributes (img, audio, video, iframe...).
      *
      * All other hosts will be dropped. By default, all hosts are allowed
@@ -116,7 +124,7 @@ class CleanerConfig
 
     public function elementsPattern(): string
     {
-        $pattern = collect($this->blockedElements)
+        $pattern = collect($this->deniedElements)
             ->reject(fn(string $element) => $this->allowedElements && in_array($element, $this->allowedElements))
             ->map(fn(string $element) => "<{$element}.*{$element}>")
             ->implode('|');
@@ -138,7 +146,7 @@ class CleanerConfig
      */
     public function inlineListenersPatterns(): array
     {
-        return [$this->inlineListenersPattern, $this->invalidHtmlInlineListenersPattern];
+        return [$this->inlineListenersPattern, $this->malformedListenersPattern];
     }
 
     public function shouldEscapeInlineListeners(): bool
@@ -158,11 +166,16 @@ class CleanerConfig
         return $this;
     }
 
-    public function setBlockedElements(array $blockedElements): CleanerConfig
+    public function setDeniedElements(array $deniedElements): CleanerConfig
     {
-        $this->blockedElements = $blockedElements;
+        $this->deniedElements = $deniedElements;
 
         return $this;
+    }
+
+    public function setBlockedElements(array $blockedElements): CleanerConfig
+    {
+        return $this->setDeniedElements($blockedElements);
     }
 
     public function setMediaElements(array $mediaElements): CleanerConfig
