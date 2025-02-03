@@ -122,8 +122,8 @@ $clean = XSSCleaner::clean($string);
 ```php
 XSSCleaner::config()
     ->allowElement('iframe')
-    ->allowMediaHosts(['youtube.com'])
-    ->blockElement('a');
+    ->allowMediaHosts(['youtube.com', 'youtu.be'])
+    ->denyElement('a');
     
 $clean = XSSCleaner::clean($string);
 ```
