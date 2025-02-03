@@ -148,6 +148,36 @@ class FilterXSSTest extends TestCase
     /**
      * @test
      */
+    public function it_removes_img_inline_listeners()
+    {
+        $this->responseFromMiddlewareWithInput([
+            'html' => 'test<img src="x" onerror="alert(document.domain)">',
+        ]);
+
+        $this->assertEquals([
+            'html' => 'test<img src="x" >',
+        ], $this->request->all());
+    }
+
+    /**
+     * @test
+     */
+    public function it_removes_inline_listeners_with_string_params()
+    {
+        $this->responseFromMiddlewareWithInput([
+            'html' => 'test<img src="x" onerror="alert(\'Hello!\')">',
+            'html' => 'test<img src=\'x\' onerror=\'alert("Hello!")\'>',
+        ]);
+
+        $this->assertEquals([
+            'html' => 'test<img src="x" >',
+            'html' => 'test<img src=\'x\' >',
+        ], $this->request->all());
+    }
+
+    /**
+     * @test
+     */
     public function it_removes_inline_listeners_from_invalid_html()
     {
         $this->responseFromMiddlewareWithInput([
@@ -156,8 +186,8 @@ class FilterXSSTest extends TestCase
         ]);
 
         $this->assertEquals([
-            'html'           => '<div class="hover" show() alert() data-a="b"><p click><span class="span" hide()></span>Text ...</p></div>',
-            'html_multiline' => "<div class=\"hover\" show() data-a=\"b\">\n<p click>\n<span class=span hide()></span>Text ...</p>\n</div>",
+            'html'           => '<div class="hover"   data-a="b"><p ><span class="span" ></span>Text ...</p></div>',
+            'html_multiline' => "<div class=\"hover\"  data-a=\"b\">\n<p >\n<span class=span ></span>Text ...</p>\n</div>",
         ], $this->request->all());
     }
 
@@ -215,7 +245,7 @@ class FilterXSSTest extends TestCase
 
         $this->assertEquals([
             'html'           => '<div class="hover"><a href="">Link</a></div>',
-            'html_multiline' => "<div class=\"hover\">\n<p click>\n<a href=\"\">Link</a>\n</p>\n</div>",
+            'html_multiline' => "<div class=\"hover\">\n<p >\n<a href=\"\">Link</a>\n</p>\n</div>",
         ], $this->request->all());
     }
 
@@ -230,7 +260,7 @@ class FilterXSSTest extends TestCase
         ]);
 
         $this->assertEquals([
-            'html'           => '<p><span  data-toggle="popover" click data-placement="top" data-content="description">text</span></p>',
+            'html'           => '<p><span  data-toggle="popover"  data-placement="top" data-content="description">text</span></p>',
             'html_multiline' => "<p>\n<span  data-toggle=\"popover\" data-placement=\"top\" data-content=\"description\">\ntext\n</span>\n</p>",
         ], $this->request->all());
     }
@@ -280,7 +310,9 @@ class FilterXSSTest extends TestCase
      */
     public function it_does_not_escape_allowed_media_hosts()
     {
-        XSSCleaner::config()->allowElement('iframe')->allowMediaHosts(['example.test', 'https://video.test', 'youtu.be']);
+        XSSCleaner::config()->allowElement('iframe')->allowMediaHosts([
+            'example.test', 'https://video.test', 'youtu.be',
+        ]);
 
         $this->responseFromMiddlewareWithInput([
             'iframe'           => '<div class="block">Before text<iframe src="http://example.test">Not supported!</iframe> after text.</div>',

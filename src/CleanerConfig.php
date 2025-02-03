@@ -24,9 +24,9 @@ class CleanerConfig
      */
     protected ?array $allowedMediaHosts = null;
 
-    protected string $inlineListenersPattern = '/(\bon[A-z]+=(\"|\').*(\"|\')(?=.*>)|(javascript:.*(?=.(\'|")??>)(\)|;)??))/isU';
+    protected string $inlineListenersPattern = '/\bon\w+\s*=\s*([\'"])(.*?)\1|javascript:[^"\' >]*/is';
 
-    protected string $invalidHtmlInlineListenersPattern = '/\bon[A-z]+=(\"|\')?.*(\"|\')?(?=.*>)/isU';
+    protected string $invalidHtmlInlineListenersPattern = '/\bon\w+\s*=\s*([\'"])?([^\'"\s>]+)\1?(?=\s|>)/i';
 
     public static function make(): CleanerConfig
     {
