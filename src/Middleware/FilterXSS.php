@@ -2,15 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MasterRO\LaravelXSSFilter;
+namespace MasterRO\LaravelXSSFilter\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\TransformsRequest;
+use MasterRO\LaravelXSSFilter\Cleaner\Cleaner;
 
-/**
- * Class FilterXSS
- *
- * @package MasterRO\LaravelXSSFilter
- */
 class FilterXSS extends TransformsRequest
 {
     /**
@@ -18,22 +14,12 @@ class FilterXSS extends TransformsRequest
      *
      * @var array
      */
-    protected $except = [];
+    protected array $except = [];
 
-    /**
-     * @var Cleaner
-     */
-    protected $cleaner;
-
-    /**
-     * FilterXSS constructor.
-     *
-     * @param Cleaner $cleaner
-     */
-    public function __construct(Cleaner $cleaner)
-    {
+    public function __construct(
+        protected Cleaner $cleaner,
+    ) {
         $this->except = config('xss-filter.except', []);
-        $this->cleaner = $cleaner;
     }
 
     /**
@@ -44,17 +30,16 @@ class FilterXSS extends TransformsRequest
      *
      * @return string|mixed
      */
-    protected function transform($key, $value)
+    protected function transform($key, $value): mixed
     {
         if (in_array($key, $this->except, true)) {
             return $value;
         }
 
-        if (! is_string($value)) {
+        if (!is_string($value)) {
             return $value;
         }
 
         return $this->cleaner->clean($value);
     }
-
 }

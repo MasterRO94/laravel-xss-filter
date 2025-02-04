@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MasterRO\LaravelXSSFilter;
+namespace MasterRO\LaravelXSSFilter\Cleaner;
 
 use Illuminate\Support\Str;
 

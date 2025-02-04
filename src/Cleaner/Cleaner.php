@@ -2,19 +2,16 @@
 
 declare(strict_types=1);
 
-namespace MasterRO\LaravelXSSFilter;
+namespace MasterRO\LaravelXSSFilter\Cleaner;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Cleaner
 {
-    protected CleanerConfig $config;
-
-    public function __construct(CleanerConfig $config)
-    {
-        $this->config = $config;
-    }
+    public function __construct(
+        protected CleanerConfig $config,
+    ) {}
 
     public function withConfig(CleanerConfig $config): Cleaner
     {
@@ -51,15 +48,15 @@ class Cleaner
 
     public function cleanMediaElements(string $value): string
     {
-        if (! $this->config->allowedMediaHosts()) {
+        if (!$this->config->allowedMediaHosts()) {
             return $value;
         }
 
         $allowedUrls = collect($this->config->allowedMediaHosts())
             ->map(
-                fn(string $host) => ! Str::startsWith($host, ['http', 'https', '//'])
+                fn(string $host) => !Str::startsWith($host, ['http', 'https', '//'])
                     ? ["http://{$host}", "https://{$host}", "//{$host}"]
-                    : [$host]
+                    : [$host],
             )
             ->flatten()
             ->all();
@@ -72,7 +69,7 @@ class Cleaner
             $urls = Arr::get($sources, '1', []);
 
             foreach ($urls as $url) {
-                if (! Str::startsWith($url, $allowedUrls)) {
+                if (!Str::startsWith($url, $allowedUrls)) {
                     $value = str_replace($url, '#!', $value);
                 }
             }
@@ -87,7 +84,7 @@ class Cleaner
             $value = preg_replace($pattern, '', $value);
         }
 
-        return ! is_string($value) ? '' : $value;
+        return !is_string($value) ? '' : $value;
     }
 
     public function escapeInlineEventListeners(string $value): string
@@ -96,7 +93,7 @@ class Cleaner
             $value = preg_replace_callback($pattern, [$this, 'escapeEqualSign'], $value);
         }
 
-        return ! is_string($value) ? '' : $value;
+        return !is_string($value) ? '' : $value;
     }
 
     protected function escapeEqualSign(array $matches): string
