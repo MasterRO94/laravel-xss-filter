@@ -27,13 +27,9 @@
 
 ### Configure once and forget about XSS attacks!
 
-Laravel 5.4+ Middleware to filter user inputs from XSS and iframes and other embed elements.
-
-It does not remove the html, it is only escaped script tags and embeds.
-
+It does not remove the html, it is only escaped script tags and embeds.  
 However, by default, it does delete inline event listeners such as `onclick`. 
 Optionally they also can be escaped (set `escape_inline_listeners` to `true` in `xss-filter.php` config file).
-
 
 For example 
 
@@ -84,26 +80,43 @@ From command line
 composer require masterro/laravel-xss-filter
 ```
 
-## Step 2: register Service provider and Facade(optional) (for Laravel 5.4)
-For your Laravel app, open `config/app.php` and, within the `providers` array, append:
-
-```php
-MasterRO\LaravelXSSFilter\XSSFilterServiceProvider::class
-```
-within the `aliases` array, append:
-```php
-'XSSCleaner' => MasterRO\LaravelXSSFilter\XSSCleanerFacade::class
-```
-
-## Step 3: publish configs (optional)
+## Step 2: publish configs (optional)
 From command line
 ```
 php artisan vendor:publish --provider="MasterRO\LaravelXSSFilter\XSSFilterServiceProvider"
 ```
 
-## Step 4: Middleware
+## Step 3: Middleware
 You can register `\MasterRO\LaravelXSSFilter\FilterXSS::class` for filtering in global middleware stack, group middleware stack or for specific routes.
 > Have a look at [Laravel's middleware documentation](https://laravel.com/docs/middleware#registering-middleware), if you need any help.
+
+### Livewire
+If you are using Livewire you can either register global middleware to all the update livewire requests. This special middleware will clean only required part of Livewire request payload and will not touch snapshot so the component checksum still would be valid. 
+```php
+// AppServiceProvider.php
+
+public function boot(): void
+{
+    Livewire::setUpdateRoute(static function ($handle) {
+        return Route::post('/livewire/update', $handle)
+            ->middleware(['web', FilterXSSLivewire::class]);
+    });
+}
+```
+
+Or you can apply middleware to specific routes and add it to persistent list to ensure inputs are cleared on subsequent component requests:
+```php
+// AppServiceProvider.php
+
+public function boot(): void
+{
+    Livewire::addPersistentMiddleware([
+        FilterXSSLivewire::class,
+    ]);
+}
+```
+
+NOTE! If you have both Livewire components and traditional Controllers you can apply only `FilterXSSLivewire::class` middleware for all required routes or globally. It will fall back to base logic for non Livewire requests.
 
 # Usage
 After adding middleware, every request will be filtered.
