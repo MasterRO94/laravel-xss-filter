@@ -116,7 +116,8 @@ public function boot(): void
 }
 ```
 
-NOTE! If you have both Livewire components and traditional Controllers you can apply only `FilterXSSLivewire::class` middleware for all required routes or globally. It will fall back to base logic for non Livewire requests.
+> [!NOTE]  
+> If you have both Livewire components and traditional Controllers you can apply only `FilterXSSLivewire::class` middleware for all required routes or globally. It will fall back to base logic for non Livewire requests.
 
 # Usage
 After adding middleware, every request will be filtered.
